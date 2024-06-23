@@ -25,5 +25,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .WithMany()
             .HasForeignKey(c => c.Owner);
 
+        modelBuilder.Entity<User>()
+            .HasIndex(c => c.Email)
+            .IsUnique();
     }
 }

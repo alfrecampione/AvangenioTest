@@ -34,6 +34,7 @@ public class DatabaseInitializer(ApplicationDbContext context, RoleManager<Ident
     {
         var roleSeeder = new RoleSeeder(roleManager);
         var userSeeder = new UserSeeder(userManager, roleManager);
+        roleSeeder.Seed().Wait();
         userSeeder.Seed().Wait();
     }
 }

@@ -75,6 +75,12 @@ builder.Services.AddIdentityCore<User>(options =>
 builder.Services.AddScoped<UserManager<User>>();
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+});
+
+
 // builder.Services.AddTransient<IdentityUser, User>();
 builder.Services.AddTransient<IDataRepository, DataRepository>();
 builder.Services.AddTransient<IContactService, ContactService>();

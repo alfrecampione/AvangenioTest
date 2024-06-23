@@ -44,7 +44,12 @@ public class ContactsController: ControllerBase
         if (newContactId == -1)
             return BadRequest();
         var newContact = await _contactsService.GetContact(newContactId);
-        return CreatedAtAction(nameof(Post), new { id = newContactId }, newContact);
+        
+        
+        // Construct the correct URL with the ID directly in the path
+        var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+        var locationUrl = $"{baseUrl}/api/Contacts/{newContactId}";
+        return Created(locationUrl, newContact);
     }
     
     [HttpPut("{id:int}")]

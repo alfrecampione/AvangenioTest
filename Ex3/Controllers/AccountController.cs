@@ -33,30 +33,26 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
     public async Task<IActionResult> Login([FromForm] LoginDto model)
     {
         var user = await userManager.FindByNameAsync(model.UserName);
-        if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
+        if (user == null || !await userManager.CheckPasswordAsync(user, model.Password)) return Unauthorized();
+        var claims = new List<Claim>
         {
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.NameIdentifier, user.Id),
-                new ("GivenName", user.FirstName), // Add GivenName claim
-                new("Surname", user.LastName), // Add Surname claim
-                new("Email", user.Email), // Add Email claim
-                // Add Role claim
-                new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country", user.Country) // Add Country claim
+            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new ("GivenName", user.FirstName), // Add GivenName claim
+            new("Surname", user.LastName), // Add Surname claim
+            new("Email", user.Email), // Add Email claim
+            new("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country", user.Country) // Add Country claim
         };
 
-            // Get the user's roles
-            var roles = await userManager.GetRolesAsync(user);
+        // Get the user's roles
+        var roles = await userManager.GetRolesAsync(user);
 
-            // Add each role as a claim
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        // Add each role as a claim
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
 
-            return Ok(new { Token = GenerateJwtToken(claims) });
-        }
+        return Ok(new { Token = GenerateJwtToken(claims) });
 
-        return Unauthorized();
     }
 
 
@@ -90,11 +86,5 @@ public class AccountController(UserManager<User> userManager) : ControllerBase
 
 
         return CreatedAtAction("Register", new { Token = GenerateJwtToken(claims) });
-    }
-
-    [HttpGet]
-    public bool IsLogged()
-    {
-        return User.Identity != null && User.Identity.IsAuthenticated;
     }
 }

@@ -36,6 +36,8 @@ public class ContactService(IDataRepository repository) : IContactService
 
     public async Task<int> PostContact(CreateContactDto createContactDto, string userID)
     {
+        if ((DateTime.Today.Year - createContactDto.DateOfBirth.Year) < 18)
+            return -1;
         var contact = new Contact
         {
             FirstName = createContactDto.FirstName,
