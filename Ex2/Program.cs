@@ -1,4 +1,4 @@
-﻿const int x = 10000;
+﻿const int x = 100;
 const int n = 2;
 
 var task1 = Task.Run(() => { Console.WriteLine("PowerSum: " + PowerSum(x, n)); });
