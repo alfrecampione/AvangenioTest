@@ -5,12 +5,12 @@ namespace Ex3.Services;
 
 public interface IContactService
 {
-    Task<int> PostContact(CreateContactDto createContactDto);
-    
+    Task<int> PostContact(CreateContactDto createContactDto, string userID);
+
     Task<ContactDto?> GetContact(int id);
     Task<IEnumerable<ContactDto>> GetAllContacts();
-    
+
     Task DeleteContact(int id);
-    
+
     Task UpdateContact(int id, CreateContactDto updateContactDto);
 }

@@ -9,7 +9,7 @@ public class Contact
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    
+
     [MaxLength(128)]
     public required string FirstName { get; set; }
     [MaxLength(128)]
@@ -19,4 +19,6 @@ public class Contact
     public required DateTime DateOfBirth { get; set; }
     [MaxLength(20)]
     public required string Phone { get; set; }
+
+    public string? Owner { get; set; }
 }

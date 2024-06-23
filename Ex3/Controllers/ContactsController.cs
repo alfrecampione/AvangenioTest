@@ -39,7 +39,8 @@ public class ContactsController: ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateContactDto createContactDto)
     {
-        var newContactId = await _contactsService.PostContact(createContactDto);
+        var userId = User.Claims.First(c=> c.Type == ClaimTypes.NameIdentifier).Value;
+        var newContactId = await _contactsService.PostContact(createContactDto, userId);
         if (newContactId == -1)
             return BadRequest();
         var newContact = await _contactsService.GetContact(newContactId);

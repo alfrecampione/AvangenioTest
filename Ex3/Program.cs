@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Ex3.DataAccess;
 using Ex3.DataAccess.Repositories;
 using InitialData;
+using Ex3.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,9 +38,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = "www.gsichanllengeapi.com",
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            RoleClaimType = ClaimTypes.Country,
+            // RoleClaimType = ClaimTypes.Country,
             // Specify the algorithm
-            ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256 }
+            ValidAlgorithms = [SecurityAlgorithms.HmacSha256]
         };
 
         options.Events = new JwtBearerEvents
@@ -72,8 +73,12 @@ builder.Services.AddIdentityCore<User>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<UserManager<User>>();
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
+// builder.Services.AddTransient<IdentityUser, User>();
 builder.Services.AddTransient<IDataRepository, DataRepository>();
+builder.Services.AddTransient<IContactService, ContactService>();
+
 // TODO: Add more services here.
 
 // Add controller services to build the api.
@@ -85,7 +90,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -136,10 +141,13 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider
         .GetRequiredService<UserManager<User>>();
 
+    var roleManager = scope.ServiceProvider
+        .GetRequiredService<RoleManager<IdentityRole>>();
+
     // Applies any pending migrations for the context to the database
     dbContext.Database.Migrate();
 
-    var dbInitializer = new DatabaseInitializer(dbContext, userManager);
+    var dbInitializer = new DatabaseInitializer(dbContext, roleManager, userManager);
     dbInitializer.EnsureInitialData();
 }
 

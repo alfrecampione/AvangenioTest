@@ -10,5 +10,7 @@ public class User : IdentityUser
     public required string FirstName { get; set; }
     [MaxLength(128)]
     public required string LastName { get; set; }
-    
+
+    public required string Country { get; set; }
+
 }

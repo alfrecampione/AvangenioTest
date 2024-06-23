@@ -11,7 +11,7 @@ public class ContactDto
     public int Age {get; set;}
     public required string Phone { get; set; }
     
-    public ContactDto FromEntity(Contact contact)
+    public static ContactDto FromEntity(Contact contact)
     {
         return new ContactDto
         {
